@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import MySQLdb
 
-# # Build paths inside the project like this: os.path.join(BASE 
+# # Build paths inside the project like this: os.path.join(BASE
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,6 +25,7 @@ SECRET_KEY = 'i#v3i17so!qo9@)h=l_u&5(8*&*&c4*tnmwlh)&n4=$jzh)4p='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = []
 
 
@@ -37,11 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,8 +79,7 @@ WSGI_APPLICATION = 'stpvisBackend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'test',
+        'NAME': 'test1',
         'USER': 'root',
         'PASSWORD': '123456',
         'HOST': '127.0.0.1',
