@@ -2,7 +2,7 @@
 from django.http import HttpResponse
 import json
 from polls import models
-from polls import partition
+from polls.stpvis import partition
 
 
 def index(request):
