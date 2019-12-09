@@ -7,9 +7,9 @@ def ncp_abc(input_zhangliang,R):
     B_temp=np.random.rand(B_lie,R)
     C_temp=np.random.rand(C_lie,R)
     pM=[]
-    pM.append(input_zhangliang.transpose((0,1,2)).reshape(A_lie,B_lie*C_lie))
-    pM.append(input_zhangliang.transpose((1,0,2)).reshape(B_lie,A_lie*C_lie))
-    pM.append(input_zhangliang.transpose((2,0,1)).reshape(C_lie,B_lie*A_lie))
+    pM.append(input_zhangliang.transpose((0,1,2)).reshape((A_lie,B_lie*C_lie),order="F"))
+    pM.append(input_zhangliang.transpose((1,0,2)).reshape((B_lie,C_lie*A_lie),order="F"))
+    pM.append(input_zhangliang.transpose((2,0,1)).reshape((C_lie,B_lie*A_lie),order="F"))
     for it in range(1000):
         # print(it)
         # 更新A矩阵
@@ -23,8 +23,7 @@ def ncp_abc(input_zhangliang,R):
         for heng in range(A_lie):
             for song in range(R):
                 A_temp[heng,song]=A_temp[heng,song]*(shang_temp[heng,song]+eps)/(xia_temp[heng,song]+eps)
-        A_temp = SKP.normalize(A_temp, axis=0, norm='l2', return_norm=False, copy=True)
-
+        A_temp = SKP.normalize(A_temp, axis=0, norm='l2', return_norm=False)
         # 更新C矩阵
         X_temp=pM[2]
         BA_KR=np.zeros((B_lie*A_lie,R))
@@ -36,9 +35,7 @@ def ncp_abc(input_zhangliang,R):
         for heng in range(C_lie):
             for song in range(R):
                 C_temp[heng,song]=C_temp[heng,song]*(shang_temp[heng,song]+eps)/(xia_temp[heng,song]+eps)
-        C_temp = SKP.normalize(C_temp, axis=0, norm='l2', return_norm=False, copy=True)
-
-
+        C_temp = SKP.normalize(C_temp, axis=0, norm='l2', return_norm=False)
         # 更新B矩阵
         X_temp=pM[1]
         CA_KR=np.zeros((C_lie*A_lie,R))
@@ -64,6 +61,5 @@ def ncp_abc(input_zhangliang,R):
     jishu=np.sum(np.sum(np.sum(input_zhangliang**2)))
     relfit=(1-loss/jishu)*100
     print(relfit)
-
-    B_temp,norm_B= SKP.normalize(B_temp, axis=0, norm='l2', return_norm=True, copy=True)
+    B_temp,norm_B= SKP.normalize(B_temp, axis=0, norm='l2', return_norm=True)
     return  [A_temp,B_temp,C_temp,norm_B]
