@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from polls.stpvis import ncp_abc
+from polls.stpvis import ncp_ac
 
 
 def summation(number):
@@ -43,7 +45,8 @@ for zhou in range(num):
         zhangliang = zhangliang+NN[A_bufen, :, :][:,
                                                   B_bufen, :][:, :, C_bufen]*quanzhong[zhou-1]
 
-print(zhangliang[0, 0, 0], zhangliang_ce[0, 0, 0])
+A,B,C,he=ncp_abc.ncp_abc(zhangliang,3)
+ce_A,ce_C,ce_he=ncp_ac.ncp_ac(zhangliang,B,he)
+print(he)
+print(ce_he)
 
-# index=1
-# Main(zhangliang_ce,zhangliang,index)
