@@ -15,3 +15,10 @@ class Article(models.Model):
     content = models.TextField()
     # deleted alive
     status = models.CharField(max_length=10)
+
+class A(models.Model):
+    id = models.AutoField(primary_key=True)
+    a0 = models.FloatField()
+    a1 = models.FloatField()
+    a2 = models.FloatField()
+   
