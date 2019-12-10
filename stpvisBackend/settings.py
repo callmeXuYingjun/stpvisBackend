@@ -126,7 +126,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 INSTALLED_APPS = [
-    'polls.apps.PollsConfig',
+    'algorithm.apps.AlgorithmConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

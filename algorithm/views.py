@@ -1,12 +1,12 @@
 # Create your views here.
 from django.http import HttpResponse
 import json
-from polls import models
-from polls.stpvis import partition
+from algorithm import models
+from algorithm.stpvis import partition
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return HttpResponse("Hello, world. You're at the algorithm index.")
 
 
 def my_api(request):
