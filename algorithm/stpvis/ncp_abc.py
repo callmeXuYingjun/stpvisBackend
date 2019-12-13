@@ -60,6 +60,6 @@ def ncp_abc(input_zhangliang,R):
                     loss=loss+(Hui[ii,jj,mm]-input_zhangliang[ii,jj,mm])**2
     jishu=np.sum(np.sum(np.sum(input_zhangliang**2)))
     relfit=(1-loss/jishu)*100
-    print(relfit)
+    # print(relfit)
     B_temp,norm_B= SKP.normalize(B_temp, axis=0, norm='l2', return_norm=True)
     return  [A_temp,B_temp,C_temp,norm_B]

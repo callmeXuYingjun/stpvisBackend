@@ -51,7 +51,7 @@ def ncp_ac(input_zhangliang, input_B,input_he):
                     loss=loss+(Hui[ii,jj,mm]-input_zhangliang[ii,jj,mm])**2
     jishu=np.sum(np.sum(np.sum(input_zhangliang**2)))
     relfit=(1-loss/jishu)*100
-    print(relfit)
+    # print(relfit)
 
     A_temp, norm_A = SKP.normalize(A_temp, axis=0, norm='l2', return_norm=True)
     C_temp, norm_C = SKP.normalize(C_temp, axis=0, norm='l2', return_norm=True)

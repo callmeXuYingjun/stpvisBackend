@@ -13,7 +13,6 @@ def my_api(request):
     dic = {}
     if request.method == 'GET':
         user_list = models.User.objects.all()
-        print(partition.summation(5))
         return HttpResponse(user_list)
     else:
         dic['message'] = '方法错误'

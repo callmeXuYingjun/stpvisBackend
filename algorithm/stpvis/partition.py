@@ -8,22 +8,37 @@ import json
 from sklearn.cluster import KMeans
 
 
-def summation(number):
-    sum = 0
-    for i in range(number):
-        sum += i
-    return
-
+# def summation(number):
+#     sum = 0
+#     for i in range(number):
+#         sum += i
+#     return
 
 zhangliang, zhangliang_ce = load.load()
 A, B, C, he = ncp_abc.ncp_abc(zhangliang, 3)
 ce_A, ce_C, ce_he = ncp_ac.ncp_ac(zhangliang_ce, B, he)
+def partition(tensorIndex,clusterDimension,clusterNum):
+    # 聚类
+    if clusterDimension==0:
+        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(A)
+    elif clusterDimension==1:
+        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(B)
+    else:
+        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(C)
+    clusters=[]
+    tensor_subs=[]
+    for i in range(clusterNum):
+        cluster_one = np.where(kmeans.labels_ == i)[0]
+        clusters.append(cluster_one)
+        if clusterDimension==0:
+            tensor_subs.append(zhangliang[cluster_one, :, :])
+        elif clusterDimension==1:
+            tensor_subs.append(zhangliang[:, cluster_one, :])
+        else:
+            tensor_subs.append(zhangliang[:, :, cluster_one])
+    return [tensor_subs,clusters]
 
-
-# 聚类
-# kmeans = KMeans(n_clusters=3, random_state=0).fit(A)
-# print(kmeans.labels_)
-
+print(partition("tensor1",0,2))
 
 # 批量插入
 # obj_list = []
