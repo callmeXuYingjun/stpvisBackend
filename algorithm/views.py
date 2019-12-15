@@ -18,8 +18,7 @@ def my_api(request):
         dic['message'] = '方法错误'
         return HttpResponse(json.dumps(dic, ensure_ascii=False))
 def patition(request):
-    return HttpResponse("Hello0000000000000000000000000000000000")
-    # print(11111111111111)
-    # partition.partition("A",0,2)
-    # partition.partition("A0",1,2)
-    # return HttpResponse(partition.partition("A01",2,3))
+    partition.partition("A",0,2)
+    partition.partition("A0",1,2)
+    tree=partition.partition("A01",2,3)
+    return HttpResponse(json.dumps(tree, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))

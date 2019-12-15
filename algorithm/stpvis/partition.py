@@ -21,7 +21,7 @@ class Node(object):
     def add_children(self,node):
         self.children.append(node)
 
-root = Node('A')
+root = Node('A',zhangliang.tolist())
 def treeFind(node,str,out=None):
     """
     N叉树的前序遍历-查找
@@ -35,7 +35,6 @@ def treeFind(node,str,out=None):
     return out
 def partition(tensorName,clusterDimension,clusterNum):
     nodeSelected=treeFind(root, tensorName)
-    print(nodeSelected.name)
     # 聚类
     if clusterDimension==0:
         kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(A)
@@ -56,14 +55,14 @@ def partition(tensorName,clusterDimension,clusterNum):
         else:
             tensorTemp=zhangliang[:, :, cluster_one]
         tensor_subs.append(tensorTemp)
-        nodeTemp = Node(tensorName+str(i))
+        nodeTemp = Node(tensorName+str(i),tensorTemp.tolist())
         nodeSelected.add_children(nodeTemp)
     # return [tensor_subs,clusters]
     return root
 
-# partition("A",0,2)
-# partition("A0",1,2)
-# partition("A01",2,3)
+partition("A",0,2)
+partition("A0",1,2)
+partition("A01",2,3)
 # print(json.dumps(root, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
 
 
