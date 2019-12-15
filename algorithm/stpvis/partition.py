@@ -7,16 +7,53 @@ from algorithm import models
 import json
 from sklearn.cluster import KMeans
 
-
-# def summation(number):
-#     sum = 0
-#     for i in range(number):
-#         sum += i
-#     return
-
 zhangliang, zhangliang_ce = load.load()
 A, B, C, he = ncp_abc.ncp_abc(zhangliang, 3)
 ce_A, ce_C, ce_he = ncp_ac.ncp_ac(zhangliang_ce, B, he)
+# 节点数据结构
+class Node(object):
+    # 初始化一个节点
+    def __init__(self,name = None,value=None):
+        self.value = []  # 节点值
+        self.name=[]
+        self.children = []    # 子节点列表
+    # 添加一个孩子节点
+    def add_children(self,node):
+        self.children.append(node)
+
+root = Node('A',zhangliang)
+# B = Node('B')
+# root.add_children(B)
+# root.add_children(Node('C'))
+# D = Node('D')
+# root.add_children(D)
+# B.add_children(Node('E'))
+# B.add_children(Node('F'))
+# B.add_children(Node('G'))
+# D.add_children(Node('H'))
+# D.add_children(Node('I'))
+# D.add_children(Node('J'))
+
+def treeFind(node,str):
+    """
+    N叉树的前序遍历-查找
+    """
+    out=None
+    if node:
+        if node.value==str:                    # 如果输入结点不为空
+            out=node
+        else:              # 添加结点值到结果列表
+            for child in node.children:     # 对每一棵子树做前序遍历
+                out=treeFind(child, str)
+    return out
+
+
+# res=treeFind(root, 'J')
+# print(res)
+
+
+print(json.dumps(root, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
+
 def partition(tensorIndex,clusterDimension,clusterNum):
     # 聚类
     if clusterDimension==0:
@@ -38,7 +75,8 @@ def partition(tensorIndex,clusterDimension,clusterNum):
             tensor_subs.append(zhangliang[:, :, cluster_one])
     return [tensor_subs,clusters]
 
-print(partition("tensor1",0,2))
+
+# print(partition("tensor1",0,2))
 
 # 批量插入
 # obj_list = []
@@ -54,29 +92,4 @@ print(partition("tensor1",0,2))
 #查询
 # a_list = models.A.objects.all()
 # print(a_list)
-
-#节点数据结构
-# class Node(object):
-#     # 初始化一个节点
-#     def __init__(self,value = None):
-#         self.value = value  # 节点值
-#         self.child_list = []    # 子节点列表
-#     # 添加一个孩子节点
-#     def add_child(self,node):
-#         self.child_list.append(node)
-
-# root = Node('A')
-# B = Node('B')
-# root.add_child(B)
-# root.add_child(Node('C'))
-# D = Node('D')
-# root.add_child(D)
-# B.add_child(Node('E'))
-# B.add_child(Node('F'))
-# B.add_child(Node('G'))
-# D.add_child(Node('H'))
-# D.add_child(Node('I'))
-# D.add_child(Node('J'))
-# print(json.dumps(root, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
-
 
