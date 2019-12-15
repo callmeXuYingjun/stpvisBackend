@@ -14,47 +14,28 @@ ce_A, ce_C, ce_he = ncp_ac.ncp_ac(zhangliang_ce, B, he)
 class Node(object):
     # 初始化一个节点
     def __init__(self,name = None,value=None):
-        self.value = []  # 节点值
-        self.name=[]
+        self.name=name
+        self.value = value  # 节点值
         self.children = []    # 子节点列表
     # 添加一个孩子节点
     def add_children(self,node):
         self.children.append(node)
 
-root = Node('A',zhangliang)
-# B = Node('B')
-# root.add_children(B)
-# root.add_children(Node('C'))
-# D = Node('D')
-# root.add_children(D)
-# B.add_children(Node('E'))
-# B.add_children(Node('F'))
-# B.add_children(Node('G'))
-# D.add_children(Node('H'))
-# D.add_children(Node('I'))
-# D.add_children(Node('J'))
-
-def treeFind(node,str):
+root = Node('A')
+def treeFind(node,str,out=None):
     """
     N叉树的前序遍历-查找
     """
-    out=None
     if node:
-        if node.value==str:                    # 如果输入结点不为空
+        if node.name==str:                    # 如果输入结点不为空
             out=node
         else:              # 添加结点值到结果列表
             for child in node.children:     # 对每一棵子树做前序遍历
-                out=treeFind(child, str)
+                out=treeFind(child, str,out)
     return out
-
-
-# res=treeFind(root, 'J')
-# print(res)
-
-
-print(json.dumps(root, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
-
-def partition(tensorIndex,clusterDimension,clusterNum):
+def partition(tensorName,clusterDimension,clusterNum):
+    nodeSelected=treeFind(root, tensorName)
+    print(nodeSelected.name)
     # 聚类
     if clusterDimension==0:
         kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(A)
@@ -67,16 +48,30 @@ def partition(tensorIndex,clusterDimension,clusterNum):
     for i in range(clusterNum):
         cluster_one = np.where(kmeans.labels_ == i)[0]
         clusters.append(cluster_one)
+        tensorTemp=None
         if clusterDimension==0:
-            tensor_subs.append(zhangliang[cluster_one, :, :])
+            tensorTemp=zhangliang[cluster_one, :, :]
         elif clusterDimension==1:
-            tensor_subs.append(zhangliang[:, cluster_one, :])
+            tensorTemp=zhangliang[:, cluster_one, :]
         else:
-            tensor_subs.append(zhangliang[:, :, cluster_one])
-    return [tensor_subs,clusters]
+            tensorTemp=zhangliang[:, :, cluster_one]
+        tensor_subs.append(tensorTemp)
+        nodeTemp = Node(tensorName+str(i))
+        nodeSelected.add_children(nodeTemp)
+    # return [tensor_subs,clusters]
+    return root
+
+# partition("A",0,2)
+# partition("A0",1,2)
+# partition("A01",2,3)
+# print(json.dumps(root, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
 
 
-# print(partition("tensor1",0,2))
+
+
+
+
+
 
 # 批量插入
 # obj_list = []
