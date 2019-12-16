@@ -20,8 +20,11 @@ class Node(object):
     # 添加一个孩子节点
     def add_children(self,node):
         self.children.append(node)
-
-root = Node('A',zhangliang.tolist())
+root=None
+def treeInit():
+    global root
+    root=Node('A',zhangliang.tolist())
+treeInit()
 def treeFind(node,str,out=None):
     """
     N叉树的前序遍历-查找
@@ -59,13 +62,6 @@ def partition(tensorName,clusterDimension,clusterNum):
         nodeSelected.add_children(nodeTemp)
     # return [tensor_subs,clusters]
     return root
-
-partition("A",0,2)
-partition("A0",1,2)
-partition("A01",2,3)
-# print(json.dumps(root, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
-
-
 
 
 
