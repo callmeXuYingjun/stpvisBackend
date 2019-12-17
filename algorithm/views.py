@@ -24,3 +24,7 @@ def patition(request):
     partition.partition("A01",2,3)
     tree=partition.partition("A011",1,2)
     return HttpResponse(json.dumps(tree, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
+
+def patition1(request):
+    print(request)
+    return HttpResponse(11111111111111)
