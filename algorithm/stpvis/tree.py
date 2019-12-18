@@ -64,17 +64,6 @@ def treeFind(node,str,out=None):
             for child in node.children:     # 对每一棵子树做前序遍历
                 out=treeFind(child, str,out)
     return out
-def treeTraversal(node):
-    print("1111111111111111111111")
-    print(dir(node))
-    if node:
-        for key in node.keys():
-            if type(node[key])==np.ndarray:                    # 如果输入结点不为空
-                node[key]=node[key].tolist()
-        if  len(node.children):            # 添加结点值到结果列表
-            for child in node.children:     # 对每一棵子树做前序遍历
-                treeTraversal(child)
-    return node
 def partition(tensorName,clusterDimension,clusterNum):
     nodeSelected=treeFind(root, tensorName)
     # 聚类

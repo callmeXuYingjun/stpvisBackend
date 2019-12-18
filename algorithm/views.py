@@ -6,7 +6,6 @@ from algorithm import models
 from algorithm.stpvis import tree
 
 class MyEncoder(json.JSONEncoder):
- 
     def default(self, obj):
         """
         只要检查到了是bytes类型的数据就把它转为str类型
@@ -20,7 +19,11 @@ class MyEncoder(json.JSONEncoder):
 
 def index(request):
     return HttpResponse("Hello, world. You're at the algorithm index.")
-
+def Object2dict(obj):
+    if type(obj) is np.ndarray:
+        return obj.tolist()
+    else:
+        return obj.__dict__
 
 def my_api(request):
     dic = {}
@@ -33,11 +36,14 @@ def my_api(request):
 def treeInit(request):
     tree.treeInit()
     treeOut=tree.partition("Root",0,2)
+    
     # partition.partition("A0",1,2)
     # partition.partition("A01",2,3)
     # tree=partition.partition("A011",1,2)
+    # print(filter(lambda a: not a.startswith('__'), dir(treeOut)))
     # return HttpResponse(json.dumps(treeOut, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
-    return HttpResponse(json.dumps(treeOut,cls=MyEncoder,indent=4))
+    return HttpResponse(json.dumps(treeOut, default=lambda obj:obj.tolist() if  type(obj) is np.ndarray else obj.__dict__, sort_keys=True, indent=4))
+    # return HttpResponse(json.dumps(treeOut,cls=MyEncoder,indent=4))
 
 def partition(request):
     dimensionSelect=int(request.GET.get('clusterNum'))
