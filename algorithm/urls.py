@@ -5,6 +5,6 @@ from . import views
 urlpatterns = [
     path('index', views.index, name='index'),
     path('my_api', views.my_api, name='my_api'),
-    path('patition', views.patition, name='patition'),
-    path('patition1', views.patition1, name='patition1'),
+    path('treeInit', views.treeInit, name='treeInit'),
+    path('partition', views.partition, name='partition'),
 ]
