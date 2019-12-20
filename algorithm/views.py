@@ -46,9 +46,11 @@ def treeInit(request):
     # return HttpResponse(json.dumps(treeOut,cls=MyEncoder,indent=4))
 
 def partition(request):
-    dimensionSelect=int(request.GET.get('clusterNum'))
+    dimensionSelect=int(request.GET.get('dimensionSelect'))
     clusteringMethodsSelect=request.GET.get('clusteringMethodsSelect')
     clusterNum=int(request.GET.get('clusterNum'))
     tensorSelectedData=request.GET.get('tensorSelectedData')
+    print(tensorSelectedData,dimensionSelect,clusterNum)
     treeOut=tree.partition(tensorSelectedData,dimensionSelect,clusterNum)
-    return HttpResponse(json.dumps(treeOut, default=lambda obj: obj.__dict__, sort_keys=True, indent=4))
+    
+    return HttpResponse(json.dumps(treeOut, default=lambda obj:obj.tolist() if  type(obj) is np.ndarray else obj.__dict__, sort_keys=True, indent=4))
