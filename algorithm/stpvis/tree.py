@@ -1,9 +1,7 @@
 import numpy as np
-import math
 from algorithm.stpvis import load
-from algorithm.stpvis import ncp_abc
-from algorithm.stpvis import ncp_ac
-from algorithm import models
+from algorithm.stpvis import ncpEnsembles
+
 import json
 from sklearn.cluster import KMeans
 
@@ -48,10 +46,9 @@ root=None
 def treeInit():
     global root
     zhangliang, zhangliang_ce = load.load()
-    A, B, C, he = ncp_abc.ncp_abc(zhangliang, 3)
-    ce_A, ce_C, ce_he = ncp_ac.ncp_ac(zhangliang_ce, B, he)
+    AAll, BAll, CAll, heAll,ce_AAll, ce_CAll, ce_heAll=ncpEnsembles.ncpEnsembles(zhangliang,zhangliang_ce)
     sum,marginalA,marginalB,marginalC=tensorStatistic(zhangliang)
-    root=Node('Root',zhangliang,zhangliang_ce,sum,marginalA,marginalB,marginalC,A, B, C, he,ce_A, ce_C, ce_he)
+    root=Node('Root',zhangliang,zhangliang_ce,sum,marginalA,marginalB,marginalC,AAll.T, BAll.T, CAll.T, heAll,ce_AAll.T, ce_CAll.T, ce_heAll)
 treeInit()
 def treeFind(node,str,out=None):
     """
@@ -68,11 +65,11 @@ def partition(tensorName,clusterDimension,clusterNum):
     nodeSelected=treeFind(root, tensorName)
     # 聚类
     if clusterDimension==0:
-        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(nodeSelected.A)
+        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(nodeSelected.A.T)
     elif clusterDimension==1:
-        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(nodeSelected.B)
+        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(nodeSelected.B.T)
     else:
-        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(nodeSelected.C)
+        kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(nodeSelected.C.T)
     for i in range(clusterNum):
         cluster_one = np.where(kmeans.labels_ == i)[0]
         tensorTemp=None
@@ -81,44 +78,14 @@ def partition(tensorName,clusterDimension,clusterNum):
         if clusterDimension==0:
             tensorTemp=nodeSelected.tensor[cluster_one, :, :]
             ce_tensorTemp=nodeSelected.ce_tensor[cluster_one, :, :]
-            # nodeTemp = Node(tensorName+"-A"+str(i),tensorTemp.tolist())
         elif clusterDimension==1:
             tensorTemp=nodeSelected.tensor[:, cluster_one, :]
             ce_tensorTemp=nodeSelected.ce_tensor[:, cluster_one, :]
-            # nodeTemp = Node(tensorName+"-B"+str(i),tensorTemp.tolist())
-
         else:
             tensorTemp=nodeSelected.tensor[:, :, cluster_one]
             ce_tensorTemp=nodeSelected.ce_tensor[:, :, cluster_one]
-            # nodeTemp = Node(tensorName+"-C"+str(i),tensorTemp.tolist())
-
-        A, B, C, he = ncp_abc.ncp_abc(tensorTemp, 3)
-        ce_A, ce_C, ce_he = ncp_ac.ncp_ac(ce_tensorTemp, B, he)
+        AAll, BAll, CAll, heAll,ce_AAll, ce_CAll, ce_heAll=ncpEnsembles.ncpEnsembles(tensorTemp,ce_tensorTemp)
         sum,marginalA,marginalB,marginalC=tensorStatistic(tensorTemp)
-        nodeTemp=Node(tensorName+dimensionStrTemp[clusterDimension]+str(i),tensorTemp,ce_tensorTemp,sum,marginalA,marginalB,marginalC,A, B, C, he,ce_A, ce_C, ce_he)
-        # nodeTemp = Node(tensorName+dimensionStrTemp[clusterDimension]+str(i),tensorTemp.tolist())
+        nodeTemp=Node(tensorName+dimensionStrTemp[clusterDimension]+str(i),tensorTemp,ce_tensorTemp,sum,marginalA,marginalB,marginalC,AAll.T, BAll.T, CAll.T, heAll,ce_AAll.T, ce_CAll.T, ce_heAll)
         nodeSelected.add_children(nodeTemp)
-    # return [tensor_subs,clusters]
     return root
-
-
-
-
-
-
-
-# 批量插入
-# obj_list = []
-# for i in range(size_A[0]):
-#     obj = models.A(
-#         a0=A[i][0],
-#         a1=A[i][1],
-#         a2=A[i][2]
-#     )
-#     obj_list.append(obj)
-# models.A.objects.bulk_create(obj_list)
-
-#查询
-# a_list = models.A.objects.all()
-# print(a_list)
-
