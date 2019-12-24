@@ -14,7 +14,8 @@ def entropy(c):
         result=0
     for x in temp[0]:
         result+=(-x)*math.log(x,2)
-    return result/temp[0].shape[0]
+    # return result/temp[0].shape[0]
+    return result
 def tensorStatistic(tensor):
     [A_lie, B_lie, C_lie] = tensor.shape
     sum=np.sum(np.sum(np.sum(tensor)))
