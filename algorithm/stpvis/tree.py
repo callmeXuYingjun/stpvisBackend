@@ -3,6 +3,7 @@ from algorithm.stpvis import load
 from algorithm.stpvis import ncpEnsembles
 import math
 import sklearn.preprocessing as SKP
+from sklearn.manifold import MDS
 
 
 import json
@@ -34,7 +35,7 @@ def tensorStatistic(tensor):
 #name,value(张量原始不需要了),三个维度的边缘分布(marginalA,marginalB,marginalC)，分解得到三个维度的模式(A,B,C,ce_A,ce_B,ce_C),每个节点的数据量(sum)
 class Node(object):
     # 初始化一个节点
-    def __init__(self,name = None,tensor = None,ce_tensor = None,sum=None,marginalA=None,marginalB=None,marginalC=None,A=None,B=None,C=None,he=None,ce_A=None,ce_C=None,ce_he=None,time=None,industry=None,area=None,entropyThree=None):
+    def __init__(self,name = None,tensor = None,ce_tensor = None,sum=None,marginalA=None,marginalB=None,marginalC=None,A=None,B=None,C=None,he=None,ce_A=None,ce_C=None,ce_he=None,time=None,industry=None,area=None,entropyThree=None,pattern2D=None):
         self.name=name
         self.tensor = tensor  # 节点值
         self.ce_tensor = ce_tensor  # 节点值
@@ -53,6 +54,7 @@ class Node(object):
         self.industry = industry  # 节点值
         self.area = area  # 节点值
         self.entropyThree=entropyThree
+        self.pattern2D=pattern2D
         self.children = []    # 子节点列表
     # 添加一个孩子节点
     def add_children(self,node):
@@ -65,9 +67,15 @@ def treeInit():
     area=np.array(["朝阳区CY","南关区NG","宽城区KC","二道区ED","绿园区LY","双阳区SY","九台市JT","德惠市DH","农安县NA","榆树市YS"])
     zhangliang, zhangliang_ce = load.load()
     AAll, BAll, CAll, heAll,ce_AAll, ce_CAll, ce_heAll=ncpEnsembles.ncpEnsembles(zhangliang,zhangliang_ce)
+    #降维
+    temp1=np.concatenate((AAll, BAll, CAll),axis=0)
+    temp2=np.concatenate((ce_AAll, BAll, ce_CAll),axis=0)
+    patternABC=np.concatenate((temp1,temp2),axis=1)
+    embedding = MDS(n_components=2)
+    pattern2D = embedding.fit_transform(patternABC.T)
     sum,marginalA,marginalB,marginalC=tensorStatistic(zhangliang_ce)
     entropyThree=[entropy(marginalA),entropy(marginalB),entropy(marginalC)]
-    root=Node('Root',zhangliang,zhangliang_ce,sum,marginalA,marginalB,marginalC,AAll.T, BAll.T, CAll.T, heAll,ce_AAll.T, ce_CAll.T, ce_heAll,time,industry,area,entropyThree)
+    root=Node('Root',zhangliang,zhangliang_ce,sum,marginalA,marginalB,marginalC,AAll.T, BAll.T, CAll.T, heAll,ce_AAll.T, ce_CAll.T, ce_heAll,time,industry,area,entropyThree,pattern2D)
 treeInit()
 def treeFind(node,str,out=None):
     """
@@ -115,6 +123,12 @@ def partition(tensorName,clusterDimension,clusterNum):
         AAll, BAll, CAll, heAll,ce_AAll, ce_CAll, ce_heAll=ncpEnsembles.ncpEnsembles(tensorTemp,ce_tensorTemp)
         sum,marginalA,marginalB,marginalC=tensorStatistic(tensorTemp)
         entropyThree=[entropy(marginalA),entropy(marginalB),entropy(marginalC)]
-        nodeTemp=Node(tensorName+dimensionStrTemp[clusterDimension]+str(i),tensorTemp,ce_tensorTemp,sum,marginalA,marginalB,marginalC,AAll.T, BAll.T, CAll.T, heAll,ce_AAll.T, ce_CAll.T, ce_heAll,timeTemp,industryTemp,areaTemp,entropyThree)
+        #降维
+        temp1=np.concatenate((AAll, BAll, CAll),axis=0)
+        temp2=np.concatenate((ce_AAll, BAll, ce_CAll),axis=0)
+        patternABC=np.concatenate((temp1,temp2),axis=1)
+        embedding = MDS(n_components=2)
+        pattern2D = embedding.fit_transform(patternABC.T)
+        nodeTemp=Node(tensorName+dimensionStrTemp[clusterDimension]+str(i),tensorTemp,ce_tensorTemp,sum,marginalA,marginalB,marginalC,AAll.T, BAll.T, CAll.T, heAll,ce_AAll.T, ce_CAll.T, ce_heAll,timeTemp,industryTemp,areaTemp,entropyThree,  pattern2D)
         nodeSelected.add_children(nodeTemp)
     return root
