@@ -41,7 +41,7 @@ def tensorStatistic(tensor):
 
 class Node(object):
     # 初始化一个节点
-    def __init__(self, name=None, tensor=None, ce_tensor=None, sum=None, marginalA=None, marginalB=None, marginalC=None, A=None, B=None, C=None, he=None, ce_A=None, ce_C=None, ce_he=None, time=None, industry=None, area=None, areaLocation=None, entropyThree=None, pattern2D=None):
+    def __init__(self, name=None, tensor=None, ce_tensor=None, sum=None, marginalA=None, marginalB=None, marginalC=None, A=None, B=None, C=None, he=None, ce_A=None, ce_C=None, ce_he=None, time=None, industry=None, area=None, areaLocation=None, entropyThree=None, pattern2D=None, anomalyTime=None, anomalyArea=None):
         self.name = name
         self.tensor = tensor  # 节点值
         self.ce_tensor = ce_tensor  # 节点值
@@ -62,6 +62,8 @@ class Node(object):
         self.areaLocation = areaLocation
         self.entropyThree = entropyThree
         self.pattern2D = pattern2D
+        self.anomalyTime = anomalyTime
+        self.anomalyArea = anomalyArea
         self.children = []    # 子节点列表
     # 添加一个孩子节点
 
@@ -83,7 +85,7 @@ def treeInit():
     areaLocation = np.array([[125.318334, 43.64432], [125.447115, 43.739438], [125.332132, 44.080271], [125.642587, 43.899292], [125.182654, 43.899292], [
                             125.667883, 43.522281], [125.854156, 44.154825], [125.720775, 44.545913], [125.182654, 44.450447], [126.562452, 44.841186]])
     zhangliang, zhangliang_ce = load.load()
-    AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll = ncpEnsembles.ncpEnsembles(
+    AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll, anomalyTime, anomalyArea = ncpEnsembles.ncpEnsembles(
         zhangliang, zhangliang_ce)
     # 降维
     temp1 = np.concatenate((AAll, BAll, CAll), axis=0)
@@ -94,7 +96,7 @@ def treeInit():
     sum, marginalA, marginalB, marginalC = tensorStatistic(zhangliang_ce)
     entropyThree = [entropy(marginalA), entropy(marginalB), entropy(marginalC)]
     root = Node('Root', zhangliang, zhangliang_ce, sum, marginalA, marginalB, marginalC, AAll.T, BAll.T,
-                CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, time, industry, area,areaLocation, entropyThree, pattern2D)
+                CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, time, industry, area, areaLocation, entropyThree, pattern2D, anomalyTime, anomalyArea)
 
 
 treeInit()
@@ -136,22 +138,22 @@ def partition(tensorName, clusterDimension, clusterNum):
             timeTemp = nodeSelected.time[cluster_one]
             industryTemp = nodeSelected.industry
             areaTemp = nodeSelected.area
-            areaLocationTemp=nodeSelected.areaLocation
+            areaLocationTemp = nodeSelected.areaLocation
         elif clusterDimension == 1:
             tensorTemp = nodeSelected.tensor[:, cluster_one, :]
             ce_tensorTemp = nodeSelected.ce_tensor[:, cluster_one, :]
             industryTemp = nodeSelected.industry[cluster_one]
             timeTemp = nodeSelected.time
             areaTemp = nodeSelected.area
-            areaLocationTemp=nodeSelected.areaLocation
+            areaLocationTemp = nodeSelected.areaLocation
         else:
             tensorTemp = nodeSelected.tensor[:, :, cluster_one]
             ce_tensorTemp = nodeSelected.ce_tensor[:, :, cluster_one]
             areaTemp = nodeSelected.area[cluster_one]
-            areaLocationTemp=nodeSelected.areaLocation[cluster_one,:]
+            areaLocationTemp = nodeSelected.areaLocation[cluster_one, :]
             timeTemp = nodeSelected.time
             industryTemp = nodeSelected.industry
-        AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll = ncpEnsembles.ncpEnsembles(
+        AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll, anomalyTime, anomalyArea = ncpEnsembles.ncpEnsembles(
             tensorTemp, ce_tensorTemp)
         sum, marginalA, marginalB, marginalC = tensorStatistic(tensorTemp)
         entropyThree = [entropy(marginalA), entropy(
@@ -163,6 +165,6 @@ def partition(tensorName, clusterDimension, clusterNum):
         embedding = MDS(n_components=2)
         pattern2D = embedding.fit_transform(patternABC.T)
         nodeTemp = Node(tensorName+dimensionStrTemp[clusterDimension]+str(i), tensorTemp, ce_tensorTemp, sum, marginalA, marginalB, marginalC,
-                        AAll.T, BAll.T, CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, timeTemp, industryTemp, areaTemp,areaLocationTemp, entropyThree,  pattern2D)
+                        AAll.T, BAll.T, CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, timeTemp, industryTemp, areaTemp, areaLocationTemp, entropyThree,  pattern2D, anomalyTime, anomalyArea)
         nodeSelected.add_children(nodeTemp)
     return root

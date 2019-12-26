@@ -10,7 +10,7 @@ def ncp_abc(input_zhangliang,R):
     pM.append(input_zhangliang.transpose((0,1,2)).reshape((A_lie,B_lie*C_lie),order="F"))
     pM.append(input_zhangliang.transpose((1,0,2)).reshape((B_lie,C_lie*A_lie),order="F"))
     pM.append(input_zhangliang.transpose((2,0,1)).reshape((C_lie,B_lie*A_lie),order="F"))
-    for it in range(1000):
+    for it in range(100):
         # print(it)
         # 更新A矩阵
         X_temp=pM[0]

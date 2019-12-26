@@ -17,25 +17,20 @@ class MyEncoder(json.JSONEncoder):
             return obj.tolist()
         return json.JSONEncoder.default(self, obj)
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the algorithm index.")
-def Object2dict(obj):
-    if type(obj) is np.ndarray:
-        return obj.tolist()
-    else:
-        return obj.__dict__
+# def index(request):
+#     return HttpResponse("Hello, world. You're at the algorithm index.")
 
-def my_api(request):
-    dic = {}
-    if request.method == 'GET':
-        user_list = models.User.objects.all()
-        return HttpResponse(user_list)
-    else:
-        dic['message'] = '方法错误'
-        return HttpResponse(json.dumps(dic, ensure_ascii=False))
+# def my_api(request):
+#     dic = {}
+#     if request.method == 'GET':
+#         user_list = models.User.objects.all()
+#         return HttpResponse(user_list)
+#     else:
+#         dic['message'] = '方法错误'
+#         return HttpResponse(json.dumps(dic, ensure_ascii=False))
 def treeInit(request):
     tree.treeInit()
-    treeOut=tree.partition("Root",0,2)
+    treeOut=tree.partition("Root",1,2)
     
     # partition.partition("A0",1,2)
     # partition.partition("A01",2,3)
@@ -49,8 +44,7 @@ def partition(request):
     dimensionSelect=int(request.GET.get('dimensionSelect'))
     clusteringMethodsSelect=request.GET.get('clusteringMethodsSelect')
     clusterNum=int(request.GET.get('clusterNum'))
-    tensorSelectedData=request.GET.get('tensorSelectedData')
-    print(tensorSelectedData,dimensionSelect,clusterNum)
-    treeOut=tree.partition(tensorSelectedData,dimensionSelect,clusterNum)
+    tensorSelectedName=request.GET.get('tensorSelectedName')
+    treeOut=tree.partition(tensorSelectedName,dimensionSelect,clusterNum)
     
     return HttpResponse(json.dumps(treeOut, default=lambda obj:obj.tolist() if  type(obj) is np.ndarray else obj.__dict__, sort_keys=True, indent=4))
