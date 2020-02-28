@@ -9,7 +9,14 @@ from sklearn.manifold import MDS
 import json
 from sklearn.cluster import KMeans
 
+timeCoarse2Fine=None
+areaCoarse2Fine=None
+# areaCoarse2Fine=[[],[],[],[],[],[],[],[],[],[]]
+def Coarse2FineInit():
+    global timeCoarse2Fine
+    timeCoarse2Fine=[[1,2],[1,2],[12,1],[2],[2],[2],[2]]
 
+Coarse2FineInit()
 def entropy(c):
     temp = SKP.normalize([c], axis=1, norm='l1', return_norm=False)
     result = -1
@@ -76,6 +83,7 @@ root = None
 
 def treeInit():
     global root
+    global zhangliang, zhangliang_ce,zhangliang_fine,zhangliang_ce_fine
     time = np.array(["Monday", "Tuesday", "Wednesday",
                      "Thursday", "Friday", "Saturday", "Sunday"])
     industry = np.array(['物业服务与管理', '供热', '占道经营', '违章建筑', '供水', '道路建设与维护', '工作效率', '噪声污染', '土地资源管理', '交通规划', '营运管理', '养老保险', '社会治安', '环境卫生', '优惠政策', '房屋产权办理', '工作纪律', '燃气', '劳动监察', '拆迁管理', '下水排水',
@@ -174,7 +182,9 @@ def selectNodeLiduFind(tensorName):
     细粒度
     """
     nodeSelected = treeFind(root, tensorName)
+    print(zhangliang_fine)
+    print(timeCoarse2Fine)
 ###############################到这一步了
-    tensorTemp = nodeSelected.tensor[cluster_one, :, :]
+    # tensorTemp = nodeSelected.tensor[cluster_one, :, :]
 
-    return root
+    # return root
