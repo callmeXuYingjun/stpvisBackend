@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     path('treeInit', views.treeInit, name='treeInit'),
     path('partition', views.partition, name='partition'),
+    path('lidu', views.lidu, name='lidu'),
 ]

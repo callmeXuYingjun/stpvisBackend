@@ -12,7 +12,7 @@ def ncpEnsembles(zhangliang,zhangliang_ce):
     ce_heAll=None
     anomalyArea=None
     anomalyTime=None
-    for i in range(3,16):
+    for i in range(3,7):
         print(i)
         A, B, C, he = ncp_abc.ncp_abc(zhangliang, i)
         ce_A, ce_C, ce_he = ncp_ac.ncp_ac(zhangliang_ce, B, he)

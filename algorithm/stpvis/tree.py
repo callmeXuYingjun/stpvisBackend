@@ -84,7 +84,7 @@ def treeInit():
                      "双阳区SY", "九台市JT", "德惠市DH", "农安县NA", "榆树市YS"])
     areaLocation = np.array([[125.318334, 43.64432], [125.447115, 43.739438], [125.332132, 44.080271], [125.642587, 43.899292], [125.182654, 43.899292], [
                             125.667883, 43.522281], [125.854156, 44.154825], [125.720775, 44.545913], [125.182654, 44.450447], [126.562452, 44.841186]])
-    zhangliang, zhangliang_ce = load.load()
+    zhangliang, zhangliang_ce,zhangliang_fine,zhangliang_ce_fine = load.load()
     AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll, anomalyTime, anomalyArea = ncpEnsembles.ncpEnsembles(
         zhangliang, zhangliang_ce)
     # 降维
@@ -167,4 +167,14 @@ def partition(tensorName, clusterDimension, clusterNum):
         nodeTemp = Node(tensorName+dimensionStrTemp[clusterDimension]+str(i), tensorTemp, ce_tensorTemp, sum, marginalA, marginalB, marginalC,
                         AAll.T, BAll.T, CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, timeTemp, industryTemp, areaTemp, areaLocationTemp, entropyThree,  pattern2D, anomalyTime, anomalyArea)
         nodeSelected.add_children(nodeTemp)
+    return root
+
+def selectNodeLiduFind(tensorName):
+    """
+    细粒度
+    """
+    nodeSelected = treeFind(root, tensorName)
+###############################到这一步了
+    tensorTemp = nodeSelected.tensor[cluster_one, :, :]
+
     return root
