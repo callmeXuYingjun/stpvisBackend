@@ -10,12 +10,25 @@ import json
 from sklearn.cluster import KMeans
 
 timeCoarse2Fine=None
-areaCoarse2Fine=None
-# areaCoarse2Fine=[[],[],[],[],[],[],[],[],[],[]]
+timeCoarse2FineName=None
+##需要更正！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+##每个网格的序号
+areaCoarse2Fine=[[0,1,2,3],[4,5,6],[7,8,9],[10,11,12],[13,14,15],[16,17,18],[19,20,21],[22,23,24],[25,26,27],[28,29]]
+##每个网格的名称
+areaCoarse2FineName=np.array([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30])
+##每个网格的经纬度
+areaCoarse2FineLocation=np.array([[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432],[125.318334, 43.64432]])
 def Coarse2FineInit():
     global timeCoarse2Fine
-    timeCoarse2Fine=[[1,2],[1,2],[12,1],[2],[2],[2],[2]]
-
+    global timeCoarse2FineName
+    timeCoarse2Fine=np.zeros(shape=(7,12))
+    timeCoarse2FineIndex=[]
+    timeCoarse2FineName=[]
+    for i in range(7):
+        for j in range(12):
+            timeCoarse2Fine[i][j]=i*12+j
+            timeCoarse2FineName.append(str(i)+"d"+str(j)+"h")
+    timeCoarse2FineName=np.array(timeCoarse2FineName)
 Coarse2FineInit()
 def entropy(c):
     temp = SKP.normalize([c], axis=1, norm='l1', return_norm=False)
@@ -163,7 +176,7 @@ def partition(tensorName, clusterDimension, clusterNum):
             industryTemp = nodeSelected.industry
         AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll, anomalyTime, anomalyArea = ncpEnsembles.ncpEnsembles(
             tensorTemp, ce_tensorTemp)
-        sum, marginalA, marginalB, marginalC = tensorStatistic(tensorTemp)
+        sum, marginalA, marginalB, marginalC = tensorStatistic(ce_tensorTemp)
         entropyThree = [entropy(marginalA), entropy(
             marginalB), entropy(marginalC)]
         # 降维
@@ -181,10 +194,43 @@ def selectNodeLiduFind(tensorName):
     """
     细粒度
     """
+    time = np.array(["Monday", "Tuesday", "Wednesday",
+                     "Thursday", "Friday", "Saturday", "Sunday"])
+    industry = np.array(['物业服务与管理', '供热', '占道经营', '违章建筑', '供水', '道路建设与维护', '工作效率', '噪声污染', '土地资源管理', '交通规划', '营运管理', '养老保险', '社会治安', '环境卫生', '优惠政策', '房屋产权办理', '工作纪律', '燃气', '劳动监察', '拆迁管理', '下水排水',
+                         '媒体内容', '低保管理', '工商活动', '农村路桥建设维护', '空气污染', '特殊扶助', '经营性收费', '交通秩序', '服务态度与质量', '交通设施建设维护', '消防安全', '人口管理', '医疗保险', '补课办班', '园林绿化', '路灯管理', '房屋交易', '政务公开', '基层组织建设', '供电', '房地产开发', '废弃物', '教学管理'])
+    area = np.array(["朝阳区CY", "南关区NG", "宽城区KC", "二道区ED", "绿园区LY",
+                     "双阳区SY", "九台市JT", "德惠市DH", "农安县NA", "榆树市YS"])
     nodeSelected = treeFind(root, tensorName)
-    print(zhangliang_fine)
-    print(timeCoarse2Fine)
-###############################到这一步了
-    # tensorTemp = nodeSelected.tensor[cluster_one, :, :]
+    timeFine = np.array([])
+    areaFine = np.array([])
+    for i in range(len(nodeSelected.time)):
+        index = np.where(time == nodeSelected.time[i])
+        timeFine=np.append(timeFine,timeCoarse2Fine[index[0][0]])
+    for i in range(len(nodeSelected.area)):
+        index = np.where(area == nodeSelected.area[i])
+        areaFine=np.append(areaFine,areaCoarse2Fine[index[0][0]])
 
-    # return root
+    timeFine=np.array(list(map(int, timeFine)))
+    areaFine=np.array(list(map(int, areaFine)))
+    tensorTemp = zhangliang_fine[timeFine, :, :]
+    tensorTemp = tensorTemp[:, :, areaFine]
+    ce_tensorTemp = zhangliang_ce_fine[timeFine, :, :]
+    ce_tensorTemp = ce_tensorTemp[:, :, areaFine]
+    timeTemp = timeCoarse2FineName[timeFine]
+    industryTemp = nodeSelected.industry
+    
+    areaTemp = areaCoarse2FineName[areaFine]
+    areaLocationTemp = areaCoarse2FineLocation[areaFine]
+    AAll, BAll, CAll, heAll, ce_AAll, ce_CAll, ce_heAll, anomalyTime, anomalyArea = ncpEnsembles.ncpEnsembles(tensorTemp, ce_tensorTemp)
+    sum, marginalA, marginalB, marginalC = tensorStatistic(ce_tensorTemp)
+    entropyThree = [entropy(marginalA), entropy(marginalB), entropy(marginalC)]
+    # 降维
+    temp1 = np.concatenate((AAll, BAll, CAll), axis=0)
+    temp2 = np.concatenate((ce_AAll, BAll, ce_CAll), axis=0)
+    patternABC = np.concatenate((temp1, temp2), axis=1)
+    embedding = MDS(n_components=2)
+    pattern2D = embedding.fit_transform(patternABC.T)
+    nodeTemp = Node(nodeSelected.name+"-find", tensorTemp, ce_tensorTemp, sum, marginalA, marginalB, marginalC,
+                    AAll.T, BAll.T, CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, timeTemp, industryTemp, areaTemp, areaLocationTemp, entropyThree,  pattern2D, anomalyTime, anomalyArea)
+    nodeSelected.add_children(nodeTemp)
+    return root

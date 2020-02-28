@@ -5,29 +5,17 @@ import json
 from algorithm import models
 from algorithm.stpvis import tree
 
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        """
-        只要检查到了是bytes类型的数据就把它转为str类型
-        :param obj:
-        :return:
-        """
-        print(type(obj))
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return json.JSONEncoder.default(self, obj)
+# class MyEncoder(json.JSONEncoder):
+#     def default(self, obj):
+#         """
+#         只要检查到了是bytes类型的数据就把它转为str类型
+#         :param obj:
+#         :return:
+#         """
+#         if isinstance(obj, np.ndarray):
+#             return obj.tolist()
+#         return json.JSONEncoder.default(self, obj)
 
-# def index(request):
-#     return HttpResponse("Hello, world. You're at the algorithm index.")
-
-# def my_api(request):
-#     dic = {}
-#     if request.method == 'GET':
-#         user_list = models.User.objects.all()
-#         return HttpResponse(user_list)
-#     else:
-#         dic['message'] = '方法错误'
-#         return HttpResponse(json.dumps(dic, ensure_ascii=False))
 def treeInit(request):
     tree.treeInit()
     treeOut=tree.partition("Root",1,2)
@@ -50,7 +38,8 @@ def partition(request):
 def lidu(request):
     liduStatus=request.GET.get('liduStatus')
     tensorSelectedName=request.GET.get('tensorSelectedName')
-    print(liduStatus)
-    if liduStatus:
+    if liduStatus=='true':
         treeOut=tree.selectNodeLiduFind(tensorSelectedName)
-    return HttpResponse('111111111111111111')
+    else:
+        print("无效")
+    return HttpResponse(json.dumps(treeOut, default=lambda obj:obj.tolist() if  type(obj) is np.ndarray or type(obj) is np.int32 else obj.__dict__, sort_keys=True, indent=4))
