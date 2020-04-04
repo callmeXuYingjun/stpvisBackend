@@ -18,7 +18,8 @@ from algorithm.stpvis import tree
 
 def treeInit(request):
     tree.treeInit()
-    treeOut=tree.partition("Root",1,2)
+    treeOut=tree.partition("Root",2,2)
+    treeOut=tree.partition("Root-C1",0,2)
     # partition.partition("A0",1,2)
     # partition.partition("A01",2,3)
     # tree=partition.partition("A011",1,2)

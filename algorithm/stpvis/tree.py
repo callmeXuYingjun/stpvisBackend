@@ -36,7 +36,8 @@ def entropy(c):
     if(len(temp[0]) > 0):
         result = 0
     for x in temp[0]:
-        result += (-x)*math.log(x, 2)
+        if(x > 0):
+            result += (-x)*math.log(x, 2)
     # return result/temp[0].shape[0]
     return result
 
@@ -75,7 +76,7 @@ class Node(object):
         self.he = he  # 节点值
         self.ce_A = ce_A  # 节点值
         self.ce_C = ce_C  # 节点值
-        self.ce_he = he  # 节点值
+        self.ce_he = ce_he  # 节点值
         self.time = time  # 节点值
         self.industry = industry  # 节点值
         self.area = area  # 节点值
@@ -119,7 +120,6 @@ def treeInit():
     root = Node('Root', zhangliang, zhangliang_ce, sum, marginalA, marginalB, marginalC, AAll.T, BAll.T,
                 CAll.T, heAll, ce_AAll.T, ce_CAll.T, ce_heAll, time, industry, area, areaLocation, entropyThree, pattern2D, anomalyTime, anomalyArea)
 
-
 treeInit()
 
 
@@ -149,7 +149,10 @@ def partition(tensorName, clusterDimension, clusterNum):
         kmeans = KMeans(n_clusters=clusterNum, random_state=0).fit(
             nodeSelected.ce_C.T)
     for i in range(clusterNum):
-        cluster_one = np.where(kmeans.labels_ == i)[0]
+        if clusterDimension == 2:
+            cluster_one = np.where(kmeans.labels_ == clusterNum-1-i)[0]
+        else:
+            cluster_one = np.where(kmeans.labels_ == i)[0]
         tensorTemp = None
         ce_tensorTemp = None
         dimensionStrTemp = ["-A", "-B", "-C"]

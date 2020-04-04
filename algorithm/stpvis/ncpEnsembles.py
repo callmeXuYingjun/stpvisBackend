@@ -40,4 +40,9 @@ def ncpEnsembles(zhangliang,zhangliang_ce):
             ce_heAll=np.concatenate((ce_heAll,ce_he),axis=0)
             anomalyTime=np.concatenate((anomalyTime,anomalyTimeTemp),axis=1)
             anomalyArea=np.concatenate((anomalyArea,anomalyAreaTemp),axis=1)
+    # print(CAll.shape)
+    # print(CAll[0,:])
+    # print(ce_CAll[0,:])
+    # print(heAll)
+    # print(ce_heAll)
     return [AAll, BAll, CAll, heAll,ce_AAll, ce_CAll, ce_heAll,anomalyTime,anomalyArea]
