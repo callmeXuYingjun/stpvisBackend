@@ -1,4 +1,4 @@
 ### 运行
 ```
-npm run serve
+python manage.py runserver
 ```
